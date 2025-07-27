@@ -1,12 +1,14 @@
 package com.infnet.simpleExpenseManager.application.service;
 
 import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserCreateDTO;
+import com.infnet.simpleExpenseManager.application.exception.EmailNotExistException;
 import com.infnet.simpleExpenseManager.application.mapper.UserDtoMapper;
 import com.infnet.simpleExpenseManager.application.port.in.UserService;
 import com.infnet.simpleExpenseManager.application.port.out.UserRepositoryPort;
 import com.infnet.simpleExpenseManager.domain.enums.Roles;
 import com.infnet.simpleExpenseManager.application.exception.DuplicateEmailException;
 import com.infnet.simpleExpenseManager.domain.user.User;
+import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUserByEmail(String email) {
+        if(!existsByEmail(email)){
+            throw new EmailNotExistException("Error: The email provided (" + email + ") does not exist.");
+        }
+        userRepositoryPort.deleteByEmail(email);
+    }
+
+    @Override
     public User findUserById(Long id) {
         return null;
     }
@@ -64,13 +74,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    @Override
-    public void deleteUserById(Long id) {
-    }
-
     private Boolean existsByEmail(String email){
         return userRepositoryPort.existsByEmail(email);
     }
-
-
 }

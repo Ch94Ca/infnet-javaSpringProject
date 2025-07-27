@@ -2,10 +2,8 @@ package com.infnet.simpleExpenseManager.adapters.in.web.controller;
 
 import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserCreateDTO;
 import com.infnet.simpleExpenseManager.application.port.in.UserService;
-import com.infnet.simpleExpenseManager.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,7 +32,7 @@ public class UserController {
            description = "Receives new user data, validates it, and persists it to the system.",
            responses = {
                    @ApiResponse(responseCode = "201", description = "User successfully created",
-                           content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+                           content = @Content(mediaType = "application/json")),
                    @ApiResponse(responseCode = "400", description = "Invalid Data", content = @Content)
            }
    )
@@ -42,4 +40,20 @@ public class UserController {
        userService.createUser(userDTO);
        return ResponseEntity.ok("User (" + userDTO.email() + ") Successfully Created");
    }
+
+    @PostMapping("/delete/{userEmail}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "Remove an existing user",
+            description = "Receives an existing user email and removes it from system.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User successfully Removed",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "404", description = "Email not found", content = @Content)
+            }
+    )
+    public ResponseEntity<String> deleteUserByEmail(@Valid @PathVariable String userEmail) {
+        userService.deleteUserByEmail(userEmail);
+        return ResponseEntity.ok("User (" + userEmail + ") Successfully Removed");
+    }
 }

@@ -7,6 +7,7 @@ import com.infnet.simpleExpenseManager.application.port.out.UserRepositoryPort;
 import com.infnet.simpleExpenseManager.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -25,5 +26,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     @Override
     public Boolean existsByEmail(String email) {
         return userJpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByEmail(String email){
+        userJpaRepository.deleteByEmail(email);
     }
 }
