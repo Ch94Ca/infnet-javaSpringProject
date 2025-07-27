@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(UserCreateDTO userDTO) {
+    public void createUser(UserCreateDTO userDTO) {
         if(existsByEmail(userDTO.email())){
             throw new DuplicateEmailException("Error: Email (" + userDTO.email() + ") already registered.");
         }
@@ -47,8 +47,6 @@ public class UserServiceImpl implements UserService {
         newUser.setUpdatedAt(LocalDateTime.now());
 
         userRepositoryPort.save(newUser);
-
-        return newUser;
     }
 
     @Override

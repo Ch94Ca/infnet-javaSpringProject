@@ -1,8 +1,8 @@
 package com.infnet.simpleExpenseManager.adapters.in.web.controller;
 
 import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserCreateDTO;
-import com.infnet.simpleExpenseManager.domain.user.User;
 import com.infnet.simpleExpenseManager.application.port.in.UserService;
+import com.infnet.simpleExpenseManager.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,7 +38,8 @@ public class UserController {
                    @ApiResponse(responseCode = "400", description = "Invalid Data", content = @Content)
            }
    )
-   public User createUser(@Valid @RequestBody UserCreateDTO userDTO) {
-       return userService.createUser(userDTO);
+   public ResponseEntity<String> createUser(@Valid @RequestBody UserCreateDTO userDTO) {
+       userService.createUser(userDTO);
+       return ResponseEntity.ok("User (" + userDTO.email() + ") Successfully Created");
    }
 }
