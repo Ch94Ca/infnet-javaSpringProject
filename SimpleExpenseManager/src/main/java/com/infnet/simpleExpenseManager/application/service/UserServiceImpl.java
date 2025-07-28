@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO createUser(UserCreateDTO userDTO) {
-        if(existsByEmail(userDTO.email())){
+        if(userRepositoryPort.existsByEmail(userDTO.email())){
             throw new DuplicateEmailException("Error: Email (" + userDTO.email() + ") already registered.");
         }
 
@@ -46,7 +46,6 @@ public class UserServiceImpl implements UserService {
         newUser.setUserRole(Roles.ROLE_USER);
         newUser.setActive(true);
         newUser.setCreatedAt(LocalDateTime.now());
-        newUser.setUpdatedAt(LocalDateTime.now());
 
         User savedUser = userRepositoryPort.save(newUser);
 
@@ -55,24 +54,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserByEmail(String email) {
-        if(!existsByEmail(email)){
+        long deletedCount = userRepositoryPort.deleteByEmail(email);
+        if (deletedCount == 0) {
             throw new EmailNotExistException("Error: The email provided (" + email + ") does not exist.");
         }
-        userRepositoryPort.deleteByEmail(email);
     }
 
     @Override
     public UserResponseDTO updateUserData(String email, UserDataUpdateDTO userDTO) {
-        if(!existsByEmail(email)){
-            throw new EmailNotExistException("Error: The email provided (" + email + ") does not exist.");
-        }
-
-        User domainUser = userRepositoryPort.findByEmail(email);
+        User domainUser = userRepositoryPort.findByEmail(email)
+                .orElseThrow(() -> new EmailNotExistException("Error: The email provided (" + email + ") does not exist."));
 
         if (userDTO.name() != null && !userDTO.name().isBlank()) {
             domainUser.setName(userDTO.name());
         }
         if (userDTO.email() != null && !userDTO.email().isBlank()) {
+            if (!email.equalsIgnoreCase(userDTO.email()) && userRepositoryPort.existsByEmail(userDTO.email())) {
+                throw new DuplicateEmailException("Error: The new email (" + userDTO.email() + ") is already in use.");
+            }
             domainUser.setEmail(userDTO.email());
         }
         if (userDTO.role() != null) {
@@ -81,9 +80,5 @@ public class UserServiceImpl implements UserService {
 
         User updatedUser = userRepositoryPort.save(domainUser);
         return userDtoMapper.toResponseDto(updatedUser);
-    }
-
-    private Boolean existsByEmail(String email){
-        return userRepositoryPort.existsByEmail(email);
     }
 }

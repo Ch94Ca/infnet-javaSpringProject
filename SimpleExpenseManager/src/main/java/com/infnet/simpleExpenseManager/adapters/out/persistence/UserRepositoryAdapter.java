@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -33,13 +34,13 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     @Transactional
-    public void deleteByEmail(String email){
-        userJpaRepository.deleteByEmail(email);
+    public Long deleteByEmail(String email){
+        return userJpaRepository.deleteByEmail(email);
     }
 
     @Override
-    public User findByEmail(String email) {
-        UserEntity foundUser = userJpaRepository.findByEmail(email);
-        return userMapper.toDomain(foundUser);
+    public Optional<User> findByEmail(String email) {
+        return userJpaRepository.findByEmail(email)
+                .map(userMapper::toDomain);
     }
 }
