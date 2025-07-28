@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class UserRepositoryAdapter implements UserRepositoryPort {
@@ -18,6 +20,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     public User save(User user) {
+        user.setUpdatedAt(LocalDateTime.now());
         UserEntity userEntity = userMapper.toEntity(user);
         UserEntity savedEntity = userJpaRepository.save(userEntity);
         return userMapper.toDomain(savedEntity);
@@ -32,5 +35,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     @Transactional
     public void deleteByEmail(String email){
         userJpaRepository.deleteByEmail(email);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        UserEntity foundUser = userJpaRepository.findByEmail(email);
+        return userMapper.toDomain(foundUser);
     }
 }

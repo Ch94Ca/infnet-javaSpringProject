@@ -1,6 +1,8 @@
 package com.infnet.simpleExpenseManager.adapters.in.web.controller;
 
 import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserCreateDTO;
+import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserDataUpdateDTO;
+import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserResponseDTO;
 import com.infnet.simpleExpenseManager.application.port.in.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 
 @Tag(name = "User", description = "Users endpoints")
 public class UserController {
@@ -25,35 +27,51 @@ public class UserController {
         this.userService = userService;
     }
 
-   @PostMapping("/create")
-   @ResponseStatus(HttpStatus.CREATED)
-   @Operation(
-           summary = "Create an new user",
-           description = "Receives new user data, validates it, and persists it to the system.",
-           responses = {
-                   @ApiResponse(responseCode = "201", description = "User successfully created",
-                           content = @Content(mediaType = "application/json")),
-                   @ApiResponse(responseCode = "400", description = "Invalid Data", content = @Content)
-           }
-   )
-   public ResponseEntity<String> createUser(@Valid @RequestBody UserCreateDTO userDTO) {
-       userService.createUser(userDTO);
-       return ResponseEntity.ok("User (" + userDTO.email() + ") Successfully Created");
-   }
+    @PostMapping()
+    @Operation(
+            summary = "Create an new user",
+            description = "Receives new user data, validates it, and persists it to the system.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "User successfully created",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "400", description = "Invalid Data", content = @Content)
+            }
+    )
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateDTO userDTO) {
+        UserResponseDTO savedUser = userService.createUser(userDTO);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedUser);
+    }
 
-    @PostMapping("/delete/{userEmail}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @DeleteMapping("/{userEmail}")
     @Operation(
             summary = "Remove an existing user",
             description = "Receives an existing user email and removes it from system.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "User successfully Removed",
+                    @ApiResponse(responseCode = "204", description = "User successfully Removed",
                             content = @Content(mediaType = "application/json")),
                     @ApiResponse(responseCode = "404", description = "Email not found", content = @Content)
             }
     )
-    public ResponseEntity<String> deleteUserByEmail(@Valid @PathVariable String userEmail) {
+    public ResponseEntity<Void> deleteUserByEmail(@PathVariable String userEmail) {
         userService.deleteUserByEmail(userEmail);
-        return ResponseEntity.ok("User (" + userEmail + ") Successfully Removed");
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PatchMapping("/{userEmail}")
+    @Operation(
+            summary = "Update an existing user",
+            description = "Receives an existing user email and update it from system.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User successfully Updated",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "404", description = "Email not found", content = @Content)
+            }
+    )
+    public ResponseEntity<UserResponseDTO> updateUserDataByEmail(@PathVariable String userEmail, @Valid @RequestBody UserDataUpdateDTO userDTO) {
+        UserResponseDTO result = userService.updateUserData(userEmail, userDTO);
+        return ResponseEntity.ok(result);
     }
 }

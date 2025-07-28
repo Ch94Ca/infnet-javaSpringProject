@@ -1,14 +1,11 @@
 package com.infnet.simpleExpenseManager.application.port.in;
 
 import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserCreateDTO;
-import com.infnet.simpleExpenseManager.domain.user.User;
-
-import java.util.List;
+import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserDataUpdateDTO;
+import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserResponseDTO;
 
 public interface UserService {
-    void createUser(UserCreateDTO userDTO);
-    User findUserById(Long id);
-    List<User> findAllUsers();
-    User updateUser(Long id, User userDetails);
+    UserResponseDTO createUser(UserCreateDTO userDTO);
+    UserResponseDTO updateUserData(String email, UserDataUpdateDTO userDTO);
     void deleteUserByEmail(String email);
 }

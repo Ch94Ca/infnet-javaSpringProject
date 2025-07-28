@@ -1,20 +1,20 @@
 package com.infnet.simpleExpenseManager.application.service;
 
 import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserCreateDTO;
+import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserDataUpdateDTO;
+import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserResponseDTO;
+import com.infnet.simpleExpenseManager.application.exception.DuplicateEmailException;
 import com.infnet.simpleExpenseManager.application.exception.EmailNotExistException;
 import com.infnet.simpleExpenseManager.application.mapper.UserDtoMapper;
 import com.infnet.simpleExpenseManager.application.port.in.UserService;
 import com.infnet.simpleExpenseManager.application.port.out.UserRepositoryPort;
 import com.infnet.simpleExpenseManager.domain.enums.Roles;
-import com.infnet.simpleExpenseManager.application.exception.DuplicateEmailException;
 import com.infnet.simpleExpenseManager.domain.user.User;
-import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(UserCreateDTO userDTO) {
+    public UserResponseDTO createUser(UserCreateDTO userDTO) {
         if(existsByEmail(userDTO.email())){
             throw new DuplicateEmailException("Error: Email (" + userDTO.email() + ") already registered.");
         }
@@ -48,7 +48,9 @@ public class UserServiceImpl implements UserService {
         newUser.setCreatedAt(LocalDateTime.now());
         newUser.setUpdatedAt(LocalDateTime.now());
 
-        userRepositoryPort.save(newUser);
+        User savedUser = userRepositoryPort.save(newUser);
+
+        return userDtoMapper.toResponseDto(savedUser);
     }
 
     @Override
@@ -60,18 +62,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserById(Long id) {
-        return null;
-    }
+    public UserResponseDTO updateUserData(String email, UserDataUpdateDTO userDTO) {
+        if(!existsByEmail(email)){
+            throw new EmailNotExistException("Error: The email provided (" + email + ") does not exist.");
+        }
 
-    @Override
-    public List<User> findAllUsers() {
-        return List.of();
-    }
+        User domainUser = userRepositoryPort.findByEmail(email);
 
-    @Override
-    public User updateUser(Long id, User userDetails) {
-        return null;
+        if (userDTO.name() != null && !userDTO.name().isBlank()) {
+            domainUser.setName(userDTO.name());
+        }
+        if (userDTO.email() != null && !userDTO.email().isBlank()) {
+            domainUser.setEmail(userDTO.email());
+        }
+        if (userDTO.role() != null) {
+            domainUser.setUserRole(userDTO.role());
+        }
+
+        User updatedUser = userRepositoryPort.save(domainUser);
+        return userDtoMapper.toResponseDto(updatedUser);
     }
 
     private Boolean existsByEmail(String email){

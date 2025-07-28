@@ -1,6 +1,7 @@
 package com.infnet.simpleExpenseManager.application.mapper;
 
 import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserCreateDTO;
+import com.infnet.simpleExpenseManager.adapters.in.web.dto.UserResponseDTO;
 import com.infnet.simpleExpenseManager.domain.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,5 +16,6 @@ public interface UserDtoMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User toDomain(UserCreateDTO dto);
 
-    // UserResponseDTO toResponseDto(User user);
+    @Mapping(source = "userRole", target = "role")
+    UserResponseDTO toResponseDto(User user);
 }

@@ -1,6 +1,5 @@
 plugins {
-    id("java")
-    id 'io.github.cdsap.dotenv' version '3.1.2'
+    id "java"
 }
 
 group = "org.simpleExpenseManager"

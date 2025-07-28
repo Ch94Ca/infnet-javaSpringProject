@@ -2,7 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'io.github.cdsap.dotenv' version '3.1.2'
 }
 
 group = 'com.infnet'
@@ -40,6 +39,9 @@ dependencies {
 
 	// DATABASE
 	runtimeOnly 'org.postgresql:postgresql'
+
+	// ENV
+	implementation 'io.github.cdimascio:dotenv-java:3.2.0'
 
 	// TESTS
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
