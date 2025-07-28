@@ -14,6 +14,7 @@ public interface UserDtoMapper {
     @Mapping(target = "userRole", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     User toDomain(UserCreateDTO dto);
 
     @Mapping(source = "userRole", target = "role")
