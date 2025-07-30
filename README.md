@@ -57,7 +57,7 @@ DB_USERNAME=user_dev
 DB_PASSWORD=password_dev
 
 # JWT Secret Key - IMPORTANT: Use a long, random, and secret string here!
-# You can generate one at https://www.lastpass.com/features/password-generator
+# You can generate one at [https://www.lastpass.com/features/password-generator](https://www.javainuse.com/jwtgenerator#google_vignette)
 JWT_SECRET_KEY=your-super-secret-and-long-jwt-key
 ```
 
