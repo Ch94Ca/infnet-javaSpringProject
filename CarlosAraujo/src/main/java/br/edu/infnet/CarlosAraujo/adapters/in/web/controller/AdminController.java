@@ -72,11 +72,11 @@ public class AdminController {
                     @ApiResponse(responseCode = "400", description = "Invalid role provided")
             }
     )
-    public ResponseEntity<Void> changeUserRole(
+    public ResponseEntity<UserResponseDTO> changeUserRole(
             @PathVariable String userEmail,
             @Valid @RequestBody UserRoleUpdateDTO roleUpdateDTO
     ) {
-        adminService.changeUserRole(userEmail, roleUpdateDTO.newRole());
-        return ResponseEntity.ok().build();
+        UserResponseDTO result = adminService.changeUserRole(userEmail, roleUpdateDTO.newRole());
+        return ResponseEntity.ok(result);
     }
 }

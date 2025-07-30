@@ -7,9 +7,10 @@ import br.edu.infnet.CarlosAraujo.application.exception.EmailNotExistException;
 import br.edu.infnet.CarlosAraujo.application.mapper.UserDtoMapper;
 import br.edu.infnet.CarlosAraujo.application.port.in.AdminService;
 import br.edu.infnet.CarlosAraujo.application.port.out.UserRepositoryPort;
-import br.edu.infnet.CarlosAraujo.domain.enums.Roles;
+import br.edu.infnet.CarlosAraujo.domain.enums.Role;
 import br.edu.infnet.CarlosAraujo.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,13 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserRepositoryPort userRepositoryPort;
     private final UserDtoMapper userDtoMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    @Value("${app.initial.admin.email}")
+    private String adminEmail;
+
+    @Value("${app.initial.admin.password}")
+    private String adminPassword;
 
     @Autowired
     public AdminServiceImpl(
@@ -26,6 +34,7 @@ public class AdminServiceImpl implements AdminService {
             UserDtoMapper userDtoMapper
     ) {
         this.userRepositoryPort = userRepositoryPort;
+        this.passwordEncoder = passwordEncoder;
         this.userDtoMapper = userDtoMapper;
     }
 
@@ -58,7 +67,7 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public UserResponseDTO changeUserRole(String email, Roles newRole) {
+    public UserResponseDTO changeUserRole(String email, Role newRole) {
         User domainUser = userRepositoryPort.findByEmail(email)
                 .orElseThrow(() -> new EmailNotExistException("Error: The email provided (" + email + ") does not exist."));
 
@@ -66,5 +75,19 @@ public class AdminServiceImpl implements AdminService {
 
         User updatedUser = userRepositoryPort.save(domainUser);
         return userDtoMapper.toResponseDto(updatedUser);
+    }
+
+    @Override
+    public void initializeAdminUser() {
+        if (userRepositoryPort.existsByUserRole(Role.ROLE_ADMIN)) {
+            return;
+        }
+        User adminUser = new User();
+        adminUser.setName("Admin");
+        adminUser.setEmail(adminEmail);
+        adminUser.setPassword(passwordEncoder.encode(adminPassword));
+        adminUser.setUserRole(Role.ROLE_ADMIN);
+        adminUser.setActive(true);
+        userRepositoryPort.save(adminUser);
     }
 }

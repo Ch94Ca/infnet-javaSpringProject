@@ -8,7 +8,7 @@ import br.edu.infnet.CarlosAraujo.application.exception.EmailNotExistException;
 import br.edu.infnet.CarlosAraujo.application.mapper.UserDtoMapper;
 import br.edu.infnet.CarlosAraujo.application.port.in.UserService;
 import br.edu.infnet.CarlosAraujo.application.port.out.UserRepositoryPort;
-import br.edu.infnet.CarlosAraujo.domain.enums.Roles;
+import br.edu.infnet.CarlosAraujo.domain.enums.Role;
 import br.edu.infnet.CarlosAraujo.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,9 +43,8 @@ public class UserServiceImpl implements UserService {
         User newUser = userDtoMapper.toDomain(userDTO);
 
         newUser.setPassword(passwordEncoder.encode(userDTO.password()));
-        newUser.setUserRole(Roles.ROLE_USER);
+        newUser.setUserRole(Role.ROLE_USER);
         newUser.setActive(true);
-        newUser.setCreatedAt(LocalDateTime.now());
 
         User savedUser = userRepositoryPort.save(newUser);
 

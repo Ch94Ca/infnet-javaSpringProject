@@ -4,6 +4,7 @@ import br.edu.infnet.CarlosAraujo.adapters.out.persistence.entity.UserEntity;
 import br.edu.infnet.CarlosAraujo.adapters.out.persistence.mapper.UserMapper;
 import br.edu.infnet.CarlosAraujo.adapters.out.persistence.repository.UserJpaRepository;
 import br.edu.infnet.CarlosAraujo.application.port.out.UserRepositoryPort;
+import br.edu.infnet.CarlosAraujo.domain.enums.Role;
 import br.edu.infnet.CarlosAraujo.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     public User save(User user) {
-        user.setUpdatedAt(LocalDateTime.now());
+        if(user.getCreatedAt() == null){
+            user.setCreatedAt(LocalDateTime.now());
+        } else {
+            user.setUpdatedAt(LocalDateTime.now());
+        }
         UserEntity userEntity = userMapper.toEntity(user);
         UserEntity savedEntity = userJpaRepository.save(userEntity);
         return userMapper.toDomain(savedEntity);
@@ -30,6 +35,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     @Override
     public Boolean existsByEmail(String email) {
         return userJpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Boolean existsByUserRole(Role role) {
+        return userJpaRepository.existsByUserRole(role);
     }
 
     @Override

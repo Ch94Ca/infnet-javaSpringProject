@@ -1,6 +1,6 @@
 package br.edu.infnet.CarlosAraujo.domain.user;
 
-import br.edu.infnet.CarlosAraujo.domain.enums.Roles;
+import br.edu.infnet.CarlosAraujo.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +20,7 @@ public class User implements UserDetails {
     private String name;
     private String email;
     private String password;
-    private Roles userRole;
+    private Role userRole;
     private boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

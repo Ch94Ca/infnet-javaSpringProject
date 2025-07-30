@@ -1,6 +1,6 @@
 package br.edu.infnet.CarlosAraujo.adapters.out.persistence.entity;
 
-import br.edu.infnet.CarlosAraujo.domain.enums.Roles;
+import br.edu.infnet.CarlosAraujo.domain.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false)
-    private Roles userRole;
+    private Role userRole;
 
     private boolean active;
 
