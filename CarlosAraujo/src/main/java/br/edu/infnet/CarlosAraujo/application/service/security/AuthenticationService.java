@@ -1,11 +1,10 @@
 package br.edu.infnet.CarlosAraujo.application.service.security;
 
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserCreateDTO;
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserResponseDTO;
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.auth.AuthResponseDTO;
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.auth.LoginRequestDTO;
 import br.edu.infnet.CarlosAraujo.application.port.in.UserService;
 import br.edu.infnet.CarlosAraujo.application.port.out.UserRepositoryPort;
+import br.edu.infnet.CarlosAraujo.application.useCase.LoginCommand;
+import br.edu.infnet.CarlosAraujo.application.useCase.UserCreateCommand;
+import br.edu.infnet.CarlosAraujo.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,22 +19,21 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public UserResponseDTO register(UserCreateDTO request) {
-        return userService.createUser(request);
+    public User register(UserCreateCommand userCreateCommand) {
+        return userService.createUser(userCreateCommand);
     }
 
-    public AuthResponseDTO authenticate(LoginRequestDTO request) {
+    public String authenticate(LoginCommand loginCommand) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.email(),
-                        request.password()
+                        loginCommand.email(),
+                        loginCommand.password()
                 )
         );
 
-        var user = userRepositoryPort.findByEmail(request.email())
+        var user = userRepositoryPort.findByEmail(loginCommand.email())
                 .orElseThrow();
 
-        var jwtToken = jwtService.generateToken(user);
-        return new AuthResponseDTO(jwtToken);
+        return jwtService.generateToken(user);
     }
 }

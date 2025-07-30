@@ -2,6 +2,7 @@ package br.edu.infnet.CarlosAraujo.adapters.in.web.controller;
 
 import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserDataUpdateDTO;
 import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserResponseDTO;
+import br.edu.infnet.CarlosAraujo.adapters.in.web.mapper.UserDtoMapper;
 import br.edu.infnet.CarlosAraujo.application.port.in.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,10 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final UserDtoMapper userDtoMapper;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(
+            UserService userService,
+            UserDtoMapper userDtoMapper
+    ) {
         this.userService = userService;
+        this.userDtoMapper = userDtoMapper;
     }
 
     @PatchMapping("/me")
@@ -45,7 +51,12 @@ public class UserController {
             @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody UserDataUpdateDTO userDTO) {
         String userEmail = userDetails.getUsername();
-        UserResponseDTO result = userService.updateUserData(userEmail, userDTO);
+        UserResponseDTO result = userDtoMapper.toResponseDto(
+                userService.updateUserData(
+                        userEmail,
+                        userDtoMapper.toUserUpdateCommand(userDTO)
+                )
+        );
         return ResponseEntity.ok(result);
     }
 }

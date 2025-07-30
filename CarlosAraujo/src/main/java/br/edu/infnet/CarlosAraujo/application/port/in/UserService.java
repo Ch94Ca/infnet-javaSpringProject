@@ -1,10 +1,10 @@
 package br.edu.infnet.CarlosAraujo.application.port.in;
 
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserCreateDTO;
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserDataUpdateDTO;
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserResponseDTO;
+import br.edu.infnet.CarlosAraujo.application.useCase.UserCreateCommand;
+import br.edu.infnet.CarlosAraujo.application.useCase.UserUpdateCommand;
+import br.edu.infnet.CarlosAraujo.domain.user.User;
 
 public interface UserService {
-    UserResponseDTO createUser(UserCreateDTO userDTO);
-    UserResponseDTO updateUserData(String email, UserDataUpdateDTO userDTO);
+    User createUser(UserCreateCommand userCreateCommand);
+    User updateUserData(String email, UserUpdateCommand userUpdateCommand);
 }

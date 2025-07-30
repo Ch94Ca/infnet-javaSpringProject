@@ -3,6 +3,7 @@ package br.edu.infnet.CarlosAraujo.adapters.in.web.controller;
 import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserDataUpdateDTO;
 import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserResponseDTO;
 import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserRoleUpdateDTO;
+import br.edu.infnet.CarlosAraujo.adapters.in.web.mapper.UserDtoMapper;
 import br.edu.infnet.CarlosAraujo.application.port.in.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,10 +26,15 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     private final AdminService adminService;
+    private final UserDtoMapper userDtoMapper;
 
     @Autowired
-    public AdminController(AdminService adminService) {
+    public AdminController(
+            AdminService adminService,
+            UserDtoMapper userDtoMapper
+    ) {
         this.adminService = adminService;
+        this.userDtoMapper = userDtoMapper;
     }
 
     @DeleteMapping("users/{userEmail}")
@@ -58,7 +64,12 @@ public class AdminController {
             }
     )
     public ResponseEntity<UserResponseDTO> updateUserDataByEmail(@PathVariable String userEmail, @Valid @RequestBody UserDataUpdateDTO userDTO) {
-        UserResponseDTO result = adminService.updateUserData(userEmail, userDTO);
+        UserResponseDTO result = userDtoMapper.toResponseDto(
+                adminService.updateUserData(
+                        userEmail,
+                        userDtoMapper.toUserUpdateCommand(userDTO)
+                )
+        );
         return ResponseEntity.ok(result);
     }
 
@@ -76,7 +87,7 @@ public class AdminController {
             @PathVariable String userEmail,
             @Valid @RequestBody UserRoleUpdateDTO roleUpdateDTO
     ) {
-        UserResponseDTO result = adminService.changeUserRole(userEmail, roleUpdateDTO.newRole());
+        UserResponseDTO result = userDtoMapper.toResponseDto(adminService.changeUserRole(userEmail, roleUpdateDTO.newRole()));
         return ResponseEntity.ok(result);
     }
 }

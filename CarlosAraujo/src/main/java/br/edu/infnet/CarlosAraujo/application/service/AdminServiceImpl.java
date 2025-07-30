@@ -1,12 +1,10 @@
 package br.edu.infnet.CarlosAraujo.application.service;
 
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserDataUpdateDTO;
-import br.edu.infnet.CarlosAraujo.adapters.in.web.dto.UserResponseDTO;
 import br.edu.infnet.CarlosAraujo.application.exception.DuplicateEmailException;
 import br.edu.infnet.CarlosAraujo.application.exception.EmailNotExistException;
-import br.edu.infnet.CarlosAraujo.application.mapper.UserDtoMapper;
 import br.edu.infnet.CarlosAraujo.application.port.in.AdminService;
 import br.edu.infnet.CarlosAraujo.application.port.out.UserRepositoryPort;
+import br.edu.infnet.CarlosAraujo.application.useCase.UserUpdateCommand;
 import br.edu.infnet.CarlosAraujo.domain.enums.Role;
 import br.edu.infnet.CarlosAraujo.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl implements AdminService {
 
     private final UserRepositoryPort userRepositoryPort;
-    private final UserDtoMapper userDtoMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.initial.admin.email}")
@@ -30,12 +27,10 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     public AdminServiceImpl(
             UserRepositoryPort userRepositoryPort,
-            PasswordEncoder passwordEncoder,
-            UserDtoMapper userDtoMapper
+            PasswordEncoder passwordEncoder
     ) {
         this.userRepositoryPort = userRepositoryPort;
         this.passwordEncoder = passwordEncoder;
-        this.userDtoMapper = userDtoMapper;
     }
 
     @Override
@@ -47,34 +42,32 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public UserResponseDTO updateUserData(String email, UserDataUpdateDTO userDTO) {
+    public User updateUserData(String email, UserUpdateCommand userUpdateCommand) {
         User domainUser = userRepositoryPort.findByEmail(email)
                 .orElseThrow(() -> new EmailNotExistException("Error: The email provided (" + email + ") does not exist."));
 
-        if (userDTO.name() != null && !userDTO.name().isBlank()) {
-            domainUser.setName(userDTO.name());
+        if (userUpdateCommand.name() != null && !userUpdateCommand.name().isBlank()) {
+            domainUser.setName(userUpdateCommand.name());
         }
-        if (userDTO.email() != null && !userDTO.email().isBlank()) {
-            if (!email.equalsIgnoreCase(userDTO.email()) && userRepositoryPort.existsByEmail(userDTO.email())) {
-                throw new DuplicateEmailException("Error: The new email (" + userDTO.email() + ") is already in use.");
+        if (userUpdateCommand.email() != null && !userUpdateCommand.email().isBlank()) {
+            if (!email.equalsIgnoreCase(userUpdateCommand.email()) && userRepositoryPort.existsByEmail(userUpdateCommand.email())) {
+                throw new DuplicateEmailException("Error: The new email (" + userUpdateCommand.email() + ") is already in use.");
             }
-            domainUser.setEmail(userDTO.email());
+            domainUser.setEmail(userUpdateCommand.email());
         }
 
-        User updatedUser = userRepositoryPort.save(domainUser);
-        return userDtoMapper.toResponseDto(updatedUser);
+        return userRepositoryPort.save(domainUser);
     }
 
 
     @Override
-    public UserResponseDTO changeUserRole(String email, Role newRole) {
+    public User changeUserRole(String email, Role newRole) {
         User domainUser = userRepositoryPort.findByEmail(email)
                 .orElseThrow(() -> new EmailNotExistException("Error: The email provided (" + email + ") does not exist."));
 
         domainUser.setUserRole(newRole);
 
-        User updatedUser = userRepositoryPort.save(domainUser);
-        return userDtoMapper.toResponseDto(updatedUser);
+        return userRepositoryPort.save(domainUser);
     }
 
     @Override
