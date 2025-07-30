@@ -26,7 +26,6 @@ public class OpenApiConfig {
                                                 .bearerFormat("JWT")
                                 )
                 )
-                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .info(new Info().title("Simple Expense Manager API").version("v1"));
     }
 }
