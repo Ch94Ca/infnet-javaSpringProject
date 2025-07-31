@@ -7,12 +7,13 @@ import br.edu.infnet.CarlosAraujo.application.port.out.UserRepositoryPort;
 import br.edu.infnet.CarlosAraujo.application.useCase.UserUpdateCommand;
 import br.edu.infnet.CarlosAraujo.domain.enums.Role;
 import br.edu.infnet.CarlosAraujo.domain.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
     private final UserRepositoryPort userRepositoryPort;
@@ -23,15 +24,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Value("${app.initial.admin.password}")
     private String adminPassword;
-
-    @Autowired
-    public AdminServiceImpl(
-            UserRepositoryPort userRepositoryPort,
-            PasswordEncoder passwordEncoder
-    ) {
-        this.userRepositoryPort = userRepositoryPort;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public void deleteUserByEmail(String email) {

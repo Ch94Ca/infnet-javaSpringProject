@@ -8,24 +8,16 @@ import br.edu.infnet.CarlosAraujo.application.useCase.UserCreateCommand;
 import br.edu.infnet.CarlosAraujo.application.useCase.UserUpdateCommand;
 import br.edu.infnet.CarlosAraujo.domain.enums.Role;
 import br.edu.infnet.CarlosAraujo.domain.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepositoryPort userRepositoryPort;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserServiceImpl(
-            UserRepositoryPort userRepositoryPort,
-            PasswordEncoder passwordEncoder
-    ) {
-        this.userRepositoryPort = userRepositoryPort;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public User createUser(UserCreateCommand userCreateCommand) {
