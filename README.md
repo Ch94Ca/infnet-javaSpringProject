@@ -5,10 +5,9 @@
 ![Security](https://img.shields.io/badge/Security-JWT-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-A backend application built with Spring Boot for managing expenses. It features a secure REST API with JWT-based authentication and role-based access control (USER and ADMIN).
+A backend application built with Spring Boot for managing expenses, architected using Hexagonal Architecture (Ports & Adapters) to ensure clean separation between business logic and external dependencies. It features a secure REST API with JWT-based authentication, role-based access control (USER and ADMIN), and a modular design that enhances maintainability, testability, and flexibility.
 
 ## ✨ Core Features
-
 
 * Secure Authentication: Stateless authentication flow using Spring Security and JSON Web Tokens (JWT).
 * Role-Based Authorization: Clear distinction between USER and ADMIN roles, with endpoints protected using method-level security.
@@ -19,7 +18,6 @@ A backend application built with Spring Boot for managing expenses. It features 
 
 ## 🛠️ Tech Stack
 
-
 * Framework: Spring Boot 3
 * Language: Java 21
 * Security: Spring Security 6
@@ -28,6 +26,73 @@ A backend application built with Spring Boot for managing expenses. It features 
 * Build Tool: Gradle
 * API Documentation: SpringDoc / Swagger UI
 * Mapping: MapStruct
+* SonarQube as quality gate tool
+
+
+## 🏗️ Architecture Pattern
+
+This structure follows Hexagonal Architecture (Ports & Adapters):
+
+* adapters/ - Adapters layer (controllers, DTOs, configurations)
+* application/ - Application layer (services, ports, exceptions)
+* domain/ - Domain layer (entities, use cases, business logic)
+
+
+## 📋 Layer Responsibilities
+
+* Adapters Layer
+     * config/security/ - Security configurations and initialization
+     * in/web/ - Controllers and DTOs (input)
+     * out/ - Repository implementations (output)
+* Application Layer
+     * port/in/ - Service interfaces (input)
+     * port/out/ - Repository interfaces (output)
+     * exception/ - Exception handling
+* Domain Layer
+     * service/ - Business service implementations
+     * use_case/ - Commands and use cases
+
+
+## 📁 Project Structure
+
+src/main/java/br/edu/infinet/carlos_araujo/
+
+├── adapters/
+
+│ ├── config/
+
+│ │ └── security/
+
+│ ├── in/
+
+│ │ └── web/
+
+│ │ ├── controller/
+
+│ │ └── dto/
+
+│ │ ├── auth/
+
+│ │ └── mapper/
+
+│ └── out/
+
+├── application/
+
+│ ├── exception/
+
+│ └── port/
+
+│ ├── in/
+
+│ └── out/
+
+└── domain/
+
+├── service/
+│   └── security/
+└── use_case/
+
 
 ## 🚀 Getting Started
 
@@ -42,7 +107,7 @@ Prerequisites
 
 Installation & Running
 
-1. **Clone the repository:**
+1. **Clone the repository:** https://github.com/Ch94Ca/infnet-javaSpringProject.git
 
 2. **Make the Gradle Wrapper executable (This step is only needed once on Linux/macOS):**
 ```console
@@ -51,19 +116,26 @@ chmod +x ./gradlew
 
 3. **Configure the application in .env file:**
 ```console
-# PostgreSQL
 DB_URL=jdbc:postgresql://localhost:5432/expense_manager_db
 DB_USERNAME=user_dev
 DB_PASSWORD=password_dev
 
 # JWT Secret Key - IMPORTANT: Use a long, random, and secret string here!
 # You can generate one at https://www.javainuse.com/jwtgenerator
-JWT_SECRET_KEY=your-super-secret-and-long-jwt-key
+JWT_SECRET_KEY=YjM0ZDYxOTllY2M3YjFlZDUxMGEzN2YwYzZlMGU4ZWYxYjE4ZWQzYjVlN2E1ZjFhNzE2YzRkMmI3ZTdmMjQ=
+
+# Admin user credentials automatically generated on first run
+INITIAL_ADMIN_EMAIL=admin@mail.com
+INITIAL_ADMIN_PASSWORD=adminpass
+
+# Sonar token for quality gate
+# Access localhost:9000 and generate a token under my account > security > generate tokens
+SONAR_TOKEN=sqa_e88228c6f1502f2a93e2fa24a97f0ec10c9080c1
 ```
 
-4. **Run the docker-compose file in docker folder to start postgreSQL database:**
+4. **Run the docker-compose file in docker folder to start postgreSQL database and SonarQube:**
 ```console
-dokcer-compose up -d
+docker-compose up -d
 ```
 
 5. **Build the project:**
@@ -101,3 +173,32 @@ Roles:
 
 *   `ROLE_USER`: Can manage their own data.
 *   `ROLE_ADMIN`: Can manage all users and system settings.
+
+## 🧪 Running Tests
+
+Run the test suite:
+```console
+# Run all tests
+./gradlew test
+
+# Run tests with coverage
+./gradlew test jacocoTestReport
+```
+
+## ✨ Quality Gate
+
+The API uses SonarQube (included in the docker-compose file) as a quality gate tool for code analysis.
+
+### Setup Instructions:
+
+* Go to http://localhost:9000
+* Login with default credentials:
+     * Username: admin
+     * Password: admin
+* Generate a token: My Account > Security > Generate Tokens
+* Add the token to your .env file as SONAR_TOKEN=your_token_here
+* Run gradle clean build sonar to execute the quality gate analysis
+
+The analysis will check code quality, coverage, and security vulnerabilities.
+
+
