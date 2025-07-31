@@ -128,7 +128,7 @@ JWT_SECRET_KEY=YjM0ZDYxOTllY2M3YjFlZDUxMGEzN2YwYzZlMGU4ZWYxYjE4ZWQzYjVlN2E1ZjFhN
 INITIAL_ADMIN_EMAIL=admin@mail.com
 INITIAL_ADMIN_PASSWORD=adminpass
 
-# Sonar token for quality gate
+# SonarQube quality gate token
 # Access localhost:9000 and generate a token under my account > security > generate tokens
 SONAR_TOKEN=sqa_e88228c6f1502f2a93e2fa24a97f0ec10c9080c1
 ```
