@@ -1,20 +1,52 @@
 version: '3.8'
 services:
-  postgres-db:
+  # --- Application DB ---
+  app-db:
     image: postgres:16
-    container_name: simple-expense-manager-db
+    container_name: expense-manager-app-db
     restart: always
-
     environment:
       POSTGRES_DB: expense_manager_db
       POSTGRES_USER: user_dev
       POSTGRES_PASSWORD: password_dev
-
     ports:
       - "5432:5432"
-
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - app-db-storage:/var/lib/postgresql/data
+
+  # --- SONARQUBE DB ---
+  sonarqube-db:
+    image: postgres:16
+    container_name: sonarqube-db
+    restart: always
+    environment:
+      POSTGRES_DB: sonardb
+      POSTGRES_USER: sonaruser
+      POSTGRES_PASSWORD: sonarpass
+    volumes:
+      - sonar-db-storage:/var/lib/postgresql/data
+
+  # --- SONARQUBE ---
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    restart: always
+    depends_on:
+      - sonarqube-db
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonarqube-db:5432/sonardb
+      SONAR_JDBC_USERNAME: sonaruser
+      SONAR_JDBC_PASSWORD: sonarpass
+    volumes:
+      - sonar_data_files:/opt/sonarqube/data
+      - sonar_extension_files:/opt/sonarqube/extensions
+      - sonar_log_files:/opt/sonarqube/logs
 
 volumes:
-  postgres-data:
+  app-db-storage:
+  sonar-db-storage:
+  sonar_data_files:
+  sonar_extension_files:
+  sonar_log_files:
