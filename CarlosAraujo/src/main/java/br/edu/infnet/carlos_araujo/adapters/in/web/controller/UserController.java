@@ -1,5 +1,6 @@
 package br.edu.infnet.carlos_araujo.adapters.in.web.controller;
 
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.PasswordChangeDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserDataUpdateDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserResponseDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.mapper.UserDtoMapper;
@@ -50,5 +51,38 @@ public class UserController {
                 )
         );
         return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/me/password")
+    @Operation(
+            summary = "Change my password",
+            description = "Changes the password for the currently authenticated user",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Password successfully changed"),
+                    @ApiResponse(responseCode = "400", description = "Invalid password data",
+                            content = @Content),
+                    @ApiResponse(responseCode = "401", description = "Current password is incorrect",
+                            content = @Content),
+                    @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content)
+            }
+    )
+    public ResponseEntity<Void> changePassword(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody PasswordChangeDTO passwordChangeDTO) {
+
+        String userEmail = userDetails.getUsername();
+
+        if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmPassword())) {
+            throw new IllegalArgumentException("New password and confirmation do not match");
+        }
+
+            userService.changePassword(
+                userEmail,
+                passwordChangeDTO.getCurrentPassword(),
+                passwordChangeDTO.getNewPassword()
+        );
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -2,6 +2,8 @@ package br.edu.infnet.carlos_araujo.application.port.out;
 
 import br.edu.infnet.carlos_araujo.domain.enums.Role;
 import br.edu.infnet.carlos_araujo.domain.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -11,4 +13,5 @@ public interface UserRepositoryPort {
     Boolean existsByUserRole(Role role);
     Long deleteByEmail(String email);
     Optional<User> findByEmail(String email);
+    Page<User> findAllUsers(Pageable pageable);
 }

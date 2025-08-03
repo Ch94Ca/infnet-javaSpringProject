@@ -1,10 +1,12 @@
 package br.edu.infnet.carlos_araujo.adapters.in.web.controller;
 
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserActiveStatusUpdateDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserDataUpdateDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserResponseDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserRoleUpdateDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.mapper.UserDtoMapper;
 import br.edu.infnet.carlos_araujo.application.port.in.AdminService;
+import br.edu.infnet.carlos_araujo.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +14,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -80,6 +85,40 @@ public class AdminController {
             @Valid @RequestBody UserRoleUpdateDTO roleUpdateDTO
     ) {
         UserResponseDTO result = userDtoMapper.toResponseDto(adminService.changeUserRole(userEmail, roleUpdateDTO.newRole()));
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/{userEmail}/active")
+    @Operation(
+            summary = "Change a user's active status",
+            description = "Updates the active status of a specific user (e.g., from ROLE_USER to ROLE_ADMIN).",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User active status successfully updated"),
+                    @ApiResponse(responseCode = "404", description = "User not found"),
+            }
+    )
+    public ResponseEntity<UserResponseDTO> changeUserActiveStatus(
+            @PathVariable String userEmail,
+            @Valid @RequestBody UserActiveStatusUpdateDTO activeStatusUpdateDTO
+    ) {
+        UserResponseDTO result = userDtoMapper.toResponseDto(adminService.changeUserActiveStatus(userEmail, activeStatusUpdateDTO.isActive()));
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping
+    @Operation(
+            summary = "Get all users",
+            description = "Get all registered users with pagination",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Pageable registered users result")
+            }
+    )
+    public ResponseEntity<Page<UserResponseDTO>> getAllUsers(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable) {
+
+        Page<User> users = adminService.getUsers(pageable);
+        Page<UserResponseDTO> result = users.map(userDtoMapper::toResponseDto);
+
         return ResponseEntity.ok(result);
     }
 }

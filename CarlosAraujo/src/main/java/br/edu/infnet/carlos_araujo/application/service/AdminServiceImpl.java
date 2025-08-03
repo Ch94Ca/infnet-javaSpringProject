@@ -9,6 +9,8 @@ import br.edu.infnet.carlos_araujo.domain.enums.Role;
 import br.edu.infnet.carlos_araujo.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,21 @@ public class AdminServiceImpl implements AdminService {
         domainUser.setUserRole(newRole);
 
         return userRepositoryPort.save(domainUser);
+    }
+
+    @Override
+    public User changeUserActiveStatus(String email, boolean newActiveStatus) {
+        User domainUser = userRepositoryPort.findByEmail(email)
+                .orElseThrow(() -> new EmailNotExistException("Error: The email provided (" + email + ") does not exist."));
+
+        domainUser.setActive(newActiveStatus);
+
+        return userRepositoryPort.save(domainUser);
+    }
+
+    @Override
+    public Page<User> getUsers(Pageable pageable) {
+        return userRepositoryPort.findAllUsers(pageable);
     }
 
     @Override

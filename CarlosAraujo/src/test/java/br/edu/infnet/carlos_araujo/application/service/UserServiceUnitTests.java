@@ -2,6 +2,7 @@ package br.edu.infnet.carlos_araujo.application.service;
 
 import br.edu.infnet.carlos_araujo.application.exception.DuplicateEmailException;
 import br.edu.infnet.carlos_araujo.application.exception.EmailNotExistException;
+import br.edu.infnet.carlos_araujo.application.exception.InvalidCredentialsException;
 import br.edu.infnet.carlos_araujo.application.port.out.UserRepositoryPort;
 import br.edu.infnet.carlos_araujo.application.use_case.UserCreateCommand;
 import br.edu.infnet.carlos_araujo.application.use_case.UserUpdateCommand;
@@ -197,6 +198,197 @@ class UserServiceUnitTests {
             assertEquals(originalEmail, updatedUser.getEmail());
             verify(userRepositoryPort, times(1)).save(any(User.class));
             verify(userRepositoryPort, never()).existsByEmail(anyString());
+        }
+    }
+
+    @Nested
+    @DisplayName("changePassword Tests")
+    class ChangePasswordTests {
+
+        @Test
+        @DisplayName("Should change password successfully when current password is correct")
+        void changePassword_ShouldSucceed_WhenCurrentPasswordIsCorrect() {
+            // Arrange
+            String email = "user@test.com";
+            String currentPassword = "oldPassword123";
+            String newPassword = "newPassword456";
+            String encodedOldPassword = "encodedOldPassword";
+            String encodedNewPassword = "encodedNewPassword";
+
+            User existingUser = new User(
+                    1L,
+                    "Carlos",
+                    email,
+                    encodedOldPassword,
+                    Role.ROLE_USER,
+                    true,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+            );
+
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+            when(userRepositoryPort.findByEmail(email)).thenReturn(Optional.of(existingUser));
+            when(passwordEncoder.matches(currentPassword, encodedOldPassword)).thenReturn(true);
+            when(passwordEncoder.encode(newPassword)).thenReturn(encodedNewPassword);
+            when(userRepositoryPort.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            // Act
+            userService.changePassword(email, currentPassword, newPassword);
+
+            // Assert
+            verify(userRepositoryPort, times(1)).findByEmail(email);
+            verify(passwordEncoder, times(1)).matches(currentPassword, encodedOldPassword);
+            verify(passwordEncoder, times(1)).encode(newPassword);
+            verify(userRepositoryPort, times(1)).save(userCaptor.capture());
+
+            User savedUser = userCaptor.getValue();
+            assertEquals(encodedNewPassword, savedUser.getPassword());
+            assertEquals(email, savedUser.getEmail());
+            assertEquals("Carlos", savedUser.getName());
+        }
+
+        @Test
+        @DisplayName("Should throw EmailNotExistException when user is not found")
+        void changePassword_ShouldThrowException_WhenUserNotFound() {
+            // Arrange
+            String email = "nonexistent@test.com";
+            String currentPassword = "oldPassword123";
+            String newPassword = "newPassword456";
+
+            when(userRepositoryPort.findByEmail(email)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            EmailNotExistException exception = assertThrows(
+                    EmailNotExistException.class,
+                    () -> userService.changePassword(email, currentPassword, newPassword)
+            );
+
+            assertEquals("User not found", exception.getMessage());
+            verify(userRepositoryPort, times(1)).findByEmail(email);
+            verify(passwordEncoder, never()).matches(anyString(), anyString());
+            verify(passwordEncoder, never()).encode(anyString());
+            verify(userRepositoryPort, never()).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("Should throw InvalidCredentialsException when current password is incorrect")
+        void changePassword_ShouldThrowException_WhenCurrentPasswordIsIncorrect() {
+            // Arrange
+            String email = "user@test.com";
+            String currentPassword = "wrongPassword";
+            String newPassword = "newPassword456";
+            String encodedOldPassword = "encodedOldPassword";
+
+            User existingUser = new User(
+                    1L,
+                    "Carlos",
+                    email,
+                    encodedOldPassword,
+                    Role.ROLE_USER,
+                    true,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+            );
+
+            when(userRepositoryPort.findByEmail(email)).thenReturn(Optional.of(existingUser));
+            when(passwordEncoder.matches(currentPassword, encodedOldPassword)).thenReturn(false);
+
+            // Act & Assert
+            InvalidCredentialsException exception = assertThrows(
+                    InvalidCredentialsException.class,
+                    () -> userService.changePassword(email, currentPassword, newPassword)
+            );
+
+            assertEquals("Current password is incorrect", exception.getMessage());
+            verify(userRepositoryPort, times(1)).findByEmail(email);
+            verify(passwordEncoder, times(1)).matches(currentPassword, encodedOldPassword);
+            verify(passwordEncoder, never()).encode(anyString());
+            verify(userRepositoryPort, never()).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("Should not change password when current and new passwords are the same")
+        void changePassword_ShouldSucceed_WhenCurrentAndNewPasswordsAreSame() {
+            // Arrange
+            String email = "user@test.com";
+            String password = "samePassword123";
+            String encodedPassword = "encodedSamePassword";
+            String encodedNewPassword = "encodedNewSamePassword";
+
+            User existingUser = new User(
+                    1L,
+                    "Carlos",
+                    email,
+                    encodedPassword,
+                    Role.ROLE_USER,
+                    true,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+            );
+
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+            when(userRepositoryPort.findByEmail(email)).thenReturn(Optional.of(existingUser));
+            when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
+            when(passwordEncoder.encode(password)).thenReturn(encodedNewPassword);
+            when(userRepositoryPort.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            // Act
+            userService.changePassword(email, password, password);
+
+            // Assert
+            verify(userRepositoryPort, times(1)).findByEmail(email);
+            verify(passwordEncoder, times(1)).matches(password, encodedPassword);
+            verify(passwordEncoder, times(1)).encode(password);
+            verify(userRepositoryPort, times(1)).save(userCaptor.capture());
+
+            User savedUser = userCaptor.getValue();
+            assertEquals(encodedNewPassword, savedUser.getPassword());
+        }
+
+        @Test
+        @DisplayName("Should verify password encoding is called with correct parameters")
+        void changePassword_ShouldCallPasswordEncodingCorrectly() {
+            // Arrange
+            String email = "user@test.com";
+            String currentPassword = "current123";
+            String newPassword = "newPassword789";
+            String encodedCurrentPassword = "encodedCurrent";
+            String encodedNewPassword = "encodedNew";
+
+            User existingUser = new User(
+                    1L,
+                    "Test User",
+                    email,
+                    encodedCurrentPassword,
+                    Role.ROLE_USER,
+                    true,
+                    LocalDateTime.now(),
+                    LocalDateTime.now()
+            );
+
+            when(userRepositoryPort.findByEmail(email)).thenReturn(Optional.of(existingUser));
+            when(passwordEncoder.matches(currentPassword, encodedCurrentPassword)).thenReturn(true);
+            when(passwordEncoder.encode(newPassword)).thenReturn(encodedNewPassword);
+            when(userRepositoryPort.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            // Act
+            userService.changePassword(email, currentPassword, newPassword);
+
+            // Assert
+            verify(passwordEncoder, times(1)).matches(
+                    currentPassword,
+                    encodedCurrentPassword
+            );
+            verify(passwordEncoder, times(1)).encode(newPassword);
+
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+            verify(userRepositoryPort, times(1)).save(userCaptor.capture());
+
+            User savedUser = userCaptor.getValue();
+            assertEquals(encodedNewPassword, savedUser.getPassword());
+            assertEquals(email, savedUser.getEmail());
         }
     }
 }
