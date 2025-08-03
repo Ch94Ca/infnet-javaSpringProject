@@ -1,4 +1,4 @@
-package br.edu.infnet.carlos_araujo.adapters.in.web.dto;
+package br.edu.infnet.carlos_araujo.adapters.in.web.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

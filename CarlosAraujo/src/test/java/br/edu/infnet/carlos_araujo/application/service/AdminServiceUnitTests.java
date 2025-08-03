@@ -4,7 +4,7 @@ import br.edu.infnet.carlos_araujo.application.exception.EmailNotExistException;
 import br.edu.infnet.carlos_araujo.application.port.in.UserService;
 import br.edu.infnet.carlos_araujo.application.port.out.UserRepositoryPort;
 import br.edu.infnet.carlos_araujo.domain.enums.Role;
-import br.edu.infnet.carlos_araujo.domain.user.User;
+import br.edu.infnet.carlos_araujo.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

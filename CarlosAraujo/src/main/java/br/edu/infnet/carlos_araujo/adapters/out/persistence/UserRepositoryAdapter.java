@@ -5,14 +5,13 @@ import br.edu.infnet.carlos_araujo.adapters.out.persistence.mapper.UserMapper;
 import br.edu.infnet.carlos_araujo.adapters.out.persistence.repository.UserJpaRepository;
 import br.edu.infnet.carlos_araujo.application.port.out.UserRepositoryPort;
 import br.edu.infnet.carlos_araujo.domain.enums.Role;
-import br.edu.infnet.carlos_araujo.domain.user.User;
+import br.edu.infnet.carlos_araujo.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
@@ -24,11 +23,6 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     public User save(User user) {
-        if(user.getCreatedAt() == null){
-            user.setCreatedAt(LocalDateTime.now());
-        } else {
-            user.setUpdatedAt(LocalDateTime.now());
-        }
         UserEntity userEntity = userMapper.toEntity(user);
         UserEntity savedEntity = userJpaRepository.save(userEntity);
         return userMapper.toDomain(savedEntity);

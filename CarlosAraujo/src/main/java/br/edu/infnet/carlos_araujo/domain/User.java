@@ -1,4 +1,4 @@
-package br.edu.infnet.carlos_araujo.domain.user;
+package br.edu.infnet.carlos_araujo.domain;
 
 import br.edu.infnet.carlos_araujo.domain.enums.Role;
 import lombok.AllArgsConstructor;
@@ -30,24 +30,13 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority(userRole.name()));
     }
 
+    public Long getUserId() {
+        return this.id;
+    }
+
     @Override
     public String getUsername() {
         return this.email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
     }
 
     @Override

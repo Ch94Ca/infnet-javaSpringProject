@@ -2,9 +2,9 @@ package br.edu.infnet.carlos_araujo.application.service.security;
 
 import br.edu.infnet.carlos_araujo.application.port.in.UserService;
 import br.edu.infnet.carlos_araujo.application.port.out.UserRepositoryPort;
-import br.edu.infnet.carlos_araujo.application.use_case.LoginCommand;
-import br.edu.infnet.carlos_araujo.application.use_case.UserCreateCommand;
-import br.edu.infnet.carlos_araujo.domain.user.User;
+import br.edu.infnet.carlos_araujo.application.use_case.auth.LoginCommand;
+import br.edu.infnet.carlos_araujo.application.use_case.user.UserCreateCommand;
+import br.edu.infnet.carlos_araujo.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

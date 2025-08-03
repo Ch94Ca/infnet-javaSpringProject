@@ -22,9 +22,13 @@ sonar {
 				"**/dto/**",
 				"**/entity/**",
 				"**/CarlosAraujoApplication.java",
+				"**/adapters/**",
+				"**/domain/**",
+				"**/controller/**",
 				"**/exception/**",
-				"**/mapper/**",
-				"**/controller/**"
+				"**/port/**",
+				"**/use_case/**",
+				"**/security/**"
 		].join(",")
 	}
 }

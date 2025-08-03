@@ -1,7 +1,7 @@
 package br.edu.infnet.carlos_araujo.adapters.in.web.controller;
 
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserCreateDTO;
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserResponseDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserCreateDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserResponseDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.dto.auth.AuthResponseDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.dto.auth.LoginRequestDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.mapper.UserDtoMapper;

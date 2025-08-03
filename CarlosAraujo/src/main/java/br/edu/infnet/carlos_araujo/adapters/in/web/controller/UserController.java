@@ -1,8 +1,8 @@
 package br.edu.infnet.carlos_araujo.adapters.in.web.controller;
 
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.PasswordChangeDTO;
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserDataUpdateDTO;
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserResponseDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.PasswordChangeDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserDataUpdateDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserResponseDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.mapper.UserDtoMapper;
 import br.edu.infnet.carlos_araujo.application.port.in.UserService;
 import io.swagger.v3.oas.annotations.Operation;

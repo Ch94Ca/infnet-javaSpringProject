@@ -1,12 +1,12 @@
 package br.edu.infnet.carlos_araujo.adapters.in.web.controller;
 
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserActiveStatusUpdateDTO;
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserDataUpdateDTO;
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserResponseDTO;
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserRoleUpdateDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserActiveStatusUpdateDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserDataUpdateDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserResponseDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserRoleUpdateDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.mapper.UserDtoMapper;
 import br.edu.infnet.carlos_araujo.application.port.in.AdminService;
-import br.edu.infnet.carlos_araujo.domain.user.User;
+import br.edu.infnet.carlos_araujo.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

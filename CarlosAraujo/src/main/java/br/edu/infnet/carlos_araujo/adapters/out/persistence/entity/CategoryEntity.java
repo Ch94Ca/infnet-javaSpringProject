@@ -1,48 +1,39 @@
 package br.edu.infnet.carlos_araujo.adapters.out.persistence.entity;
 
-import br.edu.infnet.carlos_araujo.domain.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "categories")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
-
+public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(length = 500)
+    private String description;
 
-    @Column(nullable = false)
-    private String password;
+    @Column(length = 7)
+    private String color;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_role", nullable = false)
-    private Role userRole;
-
-    private boolean active;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CategoryEntity> categories = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
