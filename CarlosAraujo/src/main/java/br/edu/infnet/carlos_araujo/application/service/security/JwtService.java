@@ -1,5 +1,6 @@
 package br.edu.infnet.carlos_araujo.application.service.security;
 
+import br.edu.infnet.carlos_araujo.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -26,6 +27,9 @@ public class JwtService {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", Long.class));
+    }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -35,6 +39,10 @@ public class JwtService {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("authorities", userDetails.getAuthorities());
+
+        if (userDetails instanceof User user) {
+            extraClaims.put("userId", user.getUserId());
+        }
 
         Instant now = Instant.now();
         return Jwts.builder()

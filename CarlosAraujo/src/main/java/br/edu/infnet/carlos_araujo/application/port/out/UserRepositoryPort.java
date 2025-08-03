@@ -1,7 +1,7 @@
 package br.edu.infnet.carlos_araujo.application.port.out;
 
 import br.edu.infnet.carlos_araujo.domain.enums.Role;
-import br.edu.infnet.carlos_araujo.domain.user.User;
+import br.edu.infnet.carlos_araujo.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

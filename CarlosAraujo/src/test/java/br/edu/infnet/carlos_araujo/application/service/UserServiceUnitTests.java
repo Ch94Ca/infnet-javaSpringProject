@@ -4,10 +4,10 @@ import br.edu.infnet.carlos_araujo.application.exception.DuplicateEmailException
 import br.edu.infnet.carlos_araujo.application.exception.EmailNotExistException;
 import br.edu.infnet.carlos_araujo.application.exception.InvalidCredentialsException;
 import br.edu.infnet.carlos_araujo.application.port.out.UserRepositoryPort;
-import br.edu.infnet.carlos_araujo.application.use_case.UserCreateCommand;
-import br.edu.infnet.carlos_araujo.application.use_case.UserUpdateCommand;
+import br.edu.infnet.carlos_araujo.application.use_case.user.UserCreateCommand;
+import br.edu.infnet.carlos_araujo.application.use_case.user.UserUpdateCommand;
 import br.edu.infnet.carlos_araujo.domain.enums.Role;
-import br.edu.infnet.carlos_araujo.domain.user.User;
+import br.edu.infnet.carlos_araujo.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -184,7 +184,7 @@ class UserServiceUnitTests {
                     LocalDateTime.now(),
                     LocalDateTime.now()
             );
-            UserUpdateCommand command = new UserUpdateCommand(newName, null); // Email é null
+            UserUpdateCommand command = new UserUpdateCommand(newName, null);
 
             when(userRepositoryPort.findByEmail(originalEmail)).thenReturn(Optional.of(existingUser));
             when(userRepositoryPort.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));

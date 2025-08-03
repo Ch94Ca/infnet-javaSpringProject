@@ -1,13 +1,13 @@
 package br.edu.infnet.carlos_araujo.adapters.in.web.mapper;
 
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserCreateDTO;
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserDataUpdateDTO;
-import br.edu.infnet.carlos_araujo.adapters.in.web.dto.UserResponseDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserCreateDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserDataUpdateDTO;
+import br.edu.infnet.carlos_araujo.adapters.in.web.dto.user.UserResponseDTO;
 import br.edu.infnet.carlos_araujo.adapters.in.web.dto.auth.LoginRequestDTO;
-import br.edu.infnet.carlos_araujo.application.use_case.LoginCommand;
-import br.edu.infnet.carlos_araujo.application.use_case.UserCreateCommand;
-import br.edu.infnet.carlos_araujo.application.use_case.UserUpdateCommand;
-import br.edu.infnet.carlos_araujo.domain.user.User;
+import br.edu.infnet.carlos_araujo.application.use_case.auth.LoginCommand;
+import br.edu.infnet.carlos_araujo.application.use_case.user.UserCreateCommand;
+import br.edu.infnet.carlos_araujo.application.use_case.user.UserUpdateCommand;
+import br.edu.infnet.carlos_araujo.domain.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
