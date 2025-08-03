@@ -7,6 +7,8 @@ import br.edu.infnet.carlos_araujo.application.port.out.UserRepositoryPort;
 import br.edu.infnet.carlos_araujo.domain.enums.Role;
 import br.edu.infnet.carlos_araujo.domain.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,5 +54,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     public Optional<User> findByEmail(String email) {
         return userJpaRepository.findByEmail(email)
                 .map(userMapper::toDomain);
+    }
+
+    @Override
+    public Page<User> findAllUsers(Pageable pageable) {
+        return userJpaRepository.findAll(pageable).
+                map(userMapper::toDomain);
     }
 }

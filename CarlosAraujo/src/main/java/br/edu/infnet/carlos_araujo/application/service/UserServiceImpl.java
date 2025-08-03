@@ -2,6 +2,7 @@ package br.edu.infnet.carlos_araujo.application.service;
 
 import br.edu.infnet.carlos_araujo.application.exception.DuplicateEmailException;
 import br.edu.infnet.carlos_araujo.application.exception.EmailNotExistException;
+import br.edu.infnet.carlos_araujo.application.exception.InvalidCredentialsException;
 import br.edu.infnet.carlos_araujo.application.port.in.UserService;
 import br.edu.infnet.carlos_araujo.application.port.out.UserRepositoryPort;
 import br.edu.infnet.carlos_araujo.application.use_case.UserCreateCommand;
@@ -76,5 +77,18 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setEmail(newEmail);
+    }
+
+    @Override
+    public void changePassword(String email, String currentPassword, String newPassword) {
+        User user = userRepositoryPort.findByEmail(email)
+                .orElseThrow(() -> new EmailNotExistException("User not found"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new InvalidCredentialsException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepositoryPort.save(user);
     }
 }

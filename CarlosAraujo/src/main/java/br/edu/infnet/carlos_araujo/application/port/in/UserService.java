@@ -7,4 +7,5 @@ import br.edu.infnet.carlos_araujo.domain.user.User;
 public interface UserService {
     User createUser(UserCreateCommand userCreateCommand);
     User updateUserData(String email, UserUpdateCommand userUpdateCommand);
+    void changePassword(String email, String currentPassword, String newPassword);
 }
